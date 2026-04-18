@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mlflow-local
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://community-charts.github.io/helm-charts
+    chart: mlflow
+    targetRevision: "1.8.1"
+    helm:
+      valuesObject:
+        backendStore:
+          postgres:
+            enabled: true
+            host: "postgres-svc"
+            port: 5432
+            database: "mlflow"
+            user: "mlflow"
+            password: "nammoadidaphat"
+        artifactRoot:
+          s3:
+            enabled: true
+            bucket: "mlflow-artifacts"
+            awsAccessKeyId: "minioadmin"
+            awsSecretAccessKey: "nammoadidaphat"
+        extraEnvVars:
+          MLFLOW_S3_ENDPOINT_URL: "http://minio-svc:9000"
+          MLFLOW_S3_IGNORE_TLS: "true"
+        service:
+          type: ClusterIP
+          port: 5000
+        ingress:
+          enabled: true
+          className: traefik
+          hosts:
+            - host: mlflow.local
+              paths:
+                - path: /
+                  pathType: Prefix
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-infra
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

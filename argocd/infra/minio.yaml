@@ -1,0 +1,61 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio-local
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://charts.min.io
+    chart: minio
+    targetRevision: "5.3.0"
+    helm:
+      valuesObject:
+        fullnameOverride: minio-svc
+        mode: standalone
+        replicas: 1
+        rootUser: minioadmin
+        rootPassword: nammoadidaphat
+        persistence:
+          storageClass: local-path
+          size: 10Gi
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "500m"
+            memory: "1Gi"
+        service:
+          type: ClusterIP
+          port: 9000
+        consoleService:
+          type: ClusterIP
+          port: 9001
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          annotations:
+            nginx.ingress.kubernetes.io/proxy-body-size: "500m"
+          hosts:
+            - minio-api.local
+        consoleIngress:
+          enabled: true
+          ingressClassName: traefik
+          hosts:
+            - minio.local
+        buckets:
+          - name: mlflow-artifacts
+            policy: none
+            purge: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-infra
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
