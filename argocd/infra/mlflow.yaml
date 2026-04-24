@@ -15,20 +15,13 @@ spec:
       valuesObject:
         backendStore:
           postgres:
-            enabled: true
-            host: "postgres-svc"
-            port: 5432
-            database: "mlflow"
-            user: "mlflow"
-            password: "nammoadidaphat"
+            enabled: false
         artifactRoot:
           s3:
-            enabled: true
-            bucket: "mlflow-artifacts"
-            awsAccessKeyId: "minioadmin"
-            awsSecretAccessKey: "nammoadidaphat"
+            enabled: false
+        extraSecretNamesForEnvFrom:
+          - mlflow-credentials
         extraEnvVars:
-          MLFLOW_S3_ENDPOINT_URL: "http://minio-svc:9000"
           MLFLOW_S3_IGNORE_TLS: "true"
         service:
           type: ClusterIP

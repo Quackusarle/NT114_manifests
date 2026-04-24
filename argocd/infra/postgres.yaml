@@ -16,7 +16,7 @@ spec:
         fullnameOverride: postgres-svc
         auth:
           username: mlflow
-          password: nammoadidaphat
+          existingSecret: postgres-credentials
           database: mlflow
         primary:
           persistence:

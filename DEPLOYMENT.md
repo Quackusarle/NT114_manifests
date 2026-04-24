@@ -102,6 +102,34 @@ env:
 
 ---
 
+## 7. Quản lý Kubernetes Secrets (GitOps Standard)
+
+Mật khẩu không được lưu dưới dạng Plain-text trong Git. Bạn **bắt buộc** phải tạo 3 Secret này bằng tay trên máy chủ K3s trước khi triển khai các ứng dụng bằng ArgoCD:
+
+```bash
+# 1. Secret cho PostgreSQL
+kubectl create secret generic postgres-credentials \
+  -n mlops-infra \
+  --from-literal=postgres-password="nammoadidaphat" \
+  --from-literal=password="nammoadidaphat"
+
+# 2. Secret cho MinIO
+kubectl create secret generic minio-credentials \
+  -n mlops-infra \
+  --from-literal=rootUser="minioadmin" \
+  --from-literal=rootPassword="nammoadidaphat"
+
+# 3. Secret cho MLflow
+kubectl create secret generic mlflow-credentials \
+  -n mlops-infra \
+  --from-literal=MLFLOW_BACKEND_STORE_URI="postgresql://mlflow:nammoadidaphat@postgres-svc:5432/mlflow" \
+  --from-literal=AWS_ACCESS_KEY_ID="minioadmin" \
+  --from-literal=AWS_SECRET_ACCESS_KEY="nammoadidaphat" \
+  --from-literal=MLFLOW_S3_ENDPOINT_URL="http://minio-svc:9000"
+```
+
+---
+
 ## 8. Lệnh Troubleshooting Cơ Bản
 
 ### Lỗi hiển thị ArgoCD OutOfSync

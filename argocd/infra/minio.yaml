@@ -16,8 +16,7 @@ spec:
         fullnameOverride: minio-svc
         mode: standalone
         replicas: 1
-        rootUser: minioadmin
-        rootPassword: nammoadidaphat
+        existingSecret: minio-credentials
         persistence:
           storageClass: local-path
           size: 10Gi

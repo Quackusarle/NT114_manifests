@@ -1,0 +1,27 @@
+# manifests/arc/runner-deployment.yaml
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: mlops-stock-runner
+  namespace: actions-runner-system
+spec:
+  replicas: 1
+  template:
+    spec:
+      repository: Quackusarle/MLOps-Stock
+      labels:
+        - self-hosted
+        - k3s
+        - mlops
+
+      dockerMTU: 0
+      dockerEnabled: true
+      
+      volumeMounts:
+        - name: docker-sock
+          mountPath: /var/run/docker.sock
+      volumes:
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
