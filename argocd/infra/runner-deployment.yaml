@@ -1,11 +1,9 @@
-# manifests/arc/runner-deployment.yaml
 apiVersion: actions.summerwind.dev/v1alpha1
 kind: RunnerDeployment
 metadata:
   name: mlops-stock-runner
   namespace: actions-runner-system
 spec:
-  replicas: 1
   template:
     spec:
       repository: Quackusarle/MLOps-Stock
@@ -13,14 +11,7 @@ spec:
         - self-hosted
         - k3s
         - mlops
-
       dockerEnabled: false
-      dockerMTU: 0
-
-      env:
-        - name: DOCKER_HOST
-          value: tcp://buildkitd.actions-runner-system.svc.cluster.local:1234
-
       resources:
         requests:
           cpu: "500m"
