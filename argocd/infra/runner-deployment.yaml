@@ -14,14 +14,17 @@ spec:
         - k3s
         - mlops
 
+      dockerEnabled: false
       dockerMTU: 0
-      dockerEnabled: true
-      
-      volumeMounts:
-        - name: docker-sock
-          mountPath: /var/run/docker.sock
-      volumes:
-        - name: docker-sock
-          hostPath:
-            path: /var/run/docker.sock
-            type: Socket
+
+      env:
+        - name: DOCKER_HOST
+          value: tcp://buildkitd.actions-runner-system.svc.cluster.local:1234
+
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "512Mi"
+        limits:
+          cpu: "2"
+          memory: "2Gi"
