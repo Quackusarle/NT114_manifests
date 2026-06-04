@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sonarqube
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://SonarSource.github.io/helm-chart-sonarqube
+    chart: sonarqube
+    targetRevision: "2026.2.1"
+    helm:
+      valuesObject:
+        community:
+          enabled: true
+        monitoringPasscode: "admin_passcode"
+        postgresql:
+          enabled: true
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          hosts:
+            - name: sonarqube.local
+              path: /
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-infra
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

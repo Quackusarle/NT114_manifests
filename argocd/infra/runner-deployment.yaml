@@ -12,6 +12,9 @@ spec:
         - k3s
         - mlops
       dockerEnabled: false
+      env:
+        - name: PIP_CACHE_DIR
+          value: /tmp/pip-cache
       resources:
         requests:
           cpu: "500m"
@@ -19,3 +22,18 @@ spec:
         limits:
           cpu: "2"
           memory: "2Gi"
+      volumes:
+        - name: pip-cache
+          hostPath:
+            path: /mnt/k3s-runner-cache/pip
+            type: DirectoryOrCreate
+        - name: trivy-cache
+          hostPath:
+            path: /mnt/k3s-runner-cache/trivy
+            type: DirectoryOrCreate
+      volumeMounts:
+        - name: pip-cache
+          mountPath: /tmp/pip-cache
+        - name: trivy-cache
+          mountPath: /tmp/trivy-cache
+
