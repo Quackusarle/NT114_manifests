@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ensemble-api
+  labels:
+    app: ensemble-api
+    {{- include "mlops-stock.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.ensembleApi.replicaCount }}
+  selector:
+    matchLabels:
+      app: ensemble-api
+  template:
+    metadata:
+      labels:
+        app: ensemble-api
+    spec:
+      serviceAccountName: {{ include "mlops-stock.serviceAccountName" . }}
+      containers:
+        - name: ensemble-api
+          image: "{{ .Values.ensembleApi.image.repository }}:{{ .Values.ensembleApi.image.tag }}"
+          imagePullPolicy: {{ .Values.ensembleApi.image.pullPolicy }}
+          env:
+            - name: DATA_SERVICE_URL
+              value: "http://data-api:8001/fetch/{}"
+            - name: TFT_SERVICE_URL
+              value: "http://tft-api:8002/predict/tft"
+            - name: LGBM_SERVICE_URL
+              value: "http://lgbm-api:8003/predict/lgbm"
+            - name: MLFLOW_TRACKING_URI
+              value: {{ .Values.mlflow.trackingUri | quote }}
+            - name: MLFLOW_S3_ENDPOINT_URL
+              value: {{ .Values.mlflow.s3EndpointUrl | quote }}
+            - name: REDIS_HOST
+              value: {{ .Values.ensembleApi.redis.host | quote }}
+            - name: REDIS_PORT
+              value: {{ .Values.ensembleApi.redis.port | quote }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.minio.existingSecret }}
+                  key: {{ .Values.minio.accessKeyField }}
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.minio.existingSecret }}
+                  key: {{ .Values.minio.secretKeyField }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.ensembleApi.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.ensembleApi.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ensemble-api
+  labels:
+    app: ensemble-api
+    {{- include "mlops-stock.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.ensembleApi.service.type }}
+  ports:
+    - port: {{ .Values.ensembleApi.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: ensemble-api

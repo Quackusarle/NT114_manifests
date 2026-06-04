@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard-ui
+  labels:
+    app: dashboard-ui
+    {{- include "mlops-stock.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.dashboardUi.replicaCount }}
+  selector:
+    matchLabels:
+      app: dashboard-ui
+  template:
+    metadata:
+      labels:
+        app: dashboard-ui
+    spec:
+      containers:
+        - name: dashboard-ui
+          image: "{{ .Values.dashboardUi.image.repository }}:{{ .Values.dashboardUi.image.tag }}"
+          imagePullPolicy: {{ .Values.dashboardUi.image.pullPolicy }}
+          env:
+            - name: ENSEMBLE_API_URL
+              value: "http://ensemble-api:8080/predict/{}"
+          ports:
+            - name: http
+              containerPort: {{ .Values.dashboardUi.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.dashboardUi.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard-ui
+  labels:
+    app: dashboard-ui
+    {{- include "mlops-stock.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.dashboardUi.service.type }}
+  ports:
+    - port: {{ .Values.dashboardUi.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: dashboard-ui

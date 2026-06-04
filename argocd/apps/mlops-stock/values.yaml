@@ -1,0 +1,117 @@
+aws:
+  serviceAccountRoleArn: "arn:aws:iam::111122223333:role/MLOps-Stock-S3-Access-Role"
+
+serviceAccount:
+  create: true
+  name: "mlops-stock-sa"
+
+mlflow:
+  trackingUri: "http://mlflow-local.mlops-infra.svc.cluster.local:5000"
+  s3EndpointUrl: "http://minio-svc.mlops-infra.svc.cluster.local:9000"
+
+minio:
+  existingSecret: "minio-credentials"
+  accessKeyField: "rootUser"
+  secretKeyField: "rootPassword"
+
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  master:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+dataApi:
+  replicaCount: 1
+  image:
+    repository: quackusarle/mlops-stock-data-api
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 8001
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+tftApi:
+  replicaCount: 1
+  image:
+    repository: quackusarle/mlops-stock-tft-api
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 8002
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+lgbmApi:
+  replicaCount: 1
+  image:
+    repository: quackusarle/mlops-stock-lgbm-api
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 8003
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+
+ensembleApi:
+  replicaCount: 1
+  image:
+    repository: quackusarle/mlops-stock-ensemble-api
+    pullPolicy: Always
+    tag: "latest"
+  redis:
+    host: "mlops-stock-redis-master"
+    port: 6379
+  service:
+    type: ClusterIP
+    port: 8080
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+dashboardUi:
+  replicaCount: 1
+  image:
+    repository: quackusarle/mlops-stock-dashboard
+    pullPolicy: Always
+    tag: "latest"
+  service:
+    type: LoadBalancer
+    port: 8081
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi

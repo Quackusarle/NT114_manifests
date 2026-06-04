@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lgbm-api
+  labels:
+    app: lgbm-api
+    {{- include "mlops-stock.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.lgbmApi.replicaCount }}
+  selector:
+    matchLabels:
+      app: lgbm-api
+  template:
+    metadata:
+      labels:
+        app: lgbm-api
+    spec:
+      serviceAccountName: {{ include "mlops-stock.serviceAccountName" . }}
+      containers:
+        - name: lgbm-api
+          image: "{{ .Values.lgbmApi.image.repository }}:{{ .Values.lgbmApi.image.tag }}"
+          imagePullPolicy: {{ .Values.lgbmApi.image.pullPolicy }}
+          env:
+            - name: MLFLOW_TRACKING_URI
+              value: {{ .Values.mlflow.trackingUri | quote }}
+            - name: MLFLOW_S3_ENDPOINT_URL
+              value: {{ .Values.mlflow.s3EndpointUrl | quote }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.minio.existingSecret }}
+                  key: {{ .Values.minio.accessKeyField }}
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.minio.existingSecret }}
+                  key: {{ .Values.minio.secretKeyField }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.lgbmApi.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.lgbmApi.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lgbm-api
+  labels:
+    app: lgbm-api
+    {{- include "mlops-stock.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.lgbmApi.service.type }}
+  ports:
+    - port: {{ .Values.lgbmApi.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: lgbm-api

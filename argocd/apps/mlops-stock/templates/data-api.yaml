@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-api
+  labels:
+    app: data-api
+    {{- include "mlops-stock.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.dataApi.replicaCount }}
+  selector:
+    matchLabels:
+      app: data-api
+  template:
+    metadata:
+      labels:
+        app: data-api
+    spec:
+      containers:
+        - name: data-api
+          image: "{{ .Values.dataApi.image.repository }}:{{ .Values.dataApi.image.tag }}"
+          imagePullPolicy: {{ .Values.dataApi.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.dataApi.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.dataApi.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-api
+  labels:
+    app: data-api
+    {{- include "mlops-stock.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.dataApi.service.type }}
+  ports:
+    - port: {{ .Values.dataApi.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: data-api

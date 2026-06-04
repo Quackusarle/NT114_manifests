@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tft-api
+  labels:
+    app: tft-api
+    {{- include "mlops-stock.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.tftApi.replicaCount }}
+  selector:
+    matchLabels:
+      app: tft-api
+  template:
+    metadata:
+      labels:
+        app: tft-api
+    spec:
+      serviceAccountName: {{ include "mlops-stock.serviceAccountName" . }}
+      containers:
+        - name: tft-api
+          image: "{{ .Values.tftApi.image.repository }}:{{ .Values.tftApi.image.tag }}"
+          imagePullPolicy: {{ .Values.tftApi.image.pullPolicy }}
+          env:
+            - name: MLFLOW_TRACKING_URI
+              value: {{ .Values.mlflow.trackingUri | quote }}
+            - name: MLFLOW_S3_ENDPOINT_URL
+              value: {{ .Values.mlflow.s3EndpointUrl | quote }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.minio.existingSecret }}
+                  key: {{ .Values.minio.accessKeyField }}
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.minio.existingSecret }}
+                  key: {{ .Values.minio.secretKeyField }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.tftApi.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.tftApi.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tft-api
+  labels:
+    app: tft-api
+    {{- include "mlops-stock.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.tftApi.service.type }}
+  ports:
+    - port: {{ .Values.tftApi.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: tft-api
