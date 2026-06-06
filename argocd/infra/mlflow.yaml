@@ -28,9 +28,14 @@ spec:
           port: 5000
         ingress:
           enabled: true
-          className: traefik
+          className: alb
+          annotations:
+            alb.ingress.kubernetes.io/scheme: internet-facing
+            alb.ingress.kubernetes.io/target-type: ip
+            alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+            alb.ingress.kubernetes.io/group.name: "mlops-group"
           hosts:
-            - host: mlflow.local
+            - host: ""
               paths:
                 - path: /
                   pathType: Prefix

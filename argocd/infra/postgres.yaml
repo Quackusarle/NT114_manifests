@@ -20,7 +20,7 @@ spec:
           database: mlflow
         primary:
           persistence:
-            storageClass: local-path
+            storageClass: ebs-sc
             size: 5Gi
           resources:
             requests:

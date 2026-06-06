@@ -6,7 +6,9 @@ metadata:
     app: tft-api
     {{- include "mlops-stock.labels" . | nindent 4 }}
 spec:
+{{- if not .Values.tftApi.autoscaling.enabled }}
   replicas: {{ .Values.tftApi.replicaCount }}
+{{- end }}
   selector:
     matchLabels:
       app: tft-api

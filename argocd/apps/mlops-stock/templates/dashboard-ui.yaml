@@ -6,7 +6,9 @@ metadata:
     app: dashboard-ui
     {{- include "mlops-stock.labels" . | nindent 4 }}
 spec:
+{{- if not .Values.dashboardUi.autoscaling.enabled }}
   replicas: {{ .Values.dashboardUi.replicaCount }}
+{{- end }}
   selector:
     matchLabels:
       app: dashboard-ui
