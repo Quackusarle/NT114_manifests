@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mlflow-local
+  name: mlflow-svc
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -15,30 +15,24 @@ spec:
       valuesObject:
         backendStore:
           postgres:
-            enabled: false
+            enabled: true
+            host: postgres-svc.mlops-infra.svc.cluster.local
+            port: 5432
+            database: mlflow
+            user: mlflow
+            passwordSecret: postgres-credentials
+            passwordSecretKey: postgres-password
         artifactRoot:
           s3:
             enabled: false
-        extraSecretNamesForEnvFrom:
-          - mlflow-credentials
+        defaultArtifactRoot: "s3://stock-models-dacn/mlflow-artifacts"
         extraEnvVars:
           MLFLOW_S3_IGNORE_TLS: "true"
         service:
           type: ClusterIP
           port: 5000
         ingress:
-          enabled: true
-          className: alb
-          annotations:
-            alb.ingress.kubernetes.io/scheme: internet-facing
-            alb.ingress.kubernetes.io/target-type: ip
-            alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-            alb.ingress.kubernetes.io/group.name: "mlops-group"
-          hosts:
-            - host: ""
-              paths:
-                - path: /
-                  pathType: Prefix
+          enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: mlops-infra

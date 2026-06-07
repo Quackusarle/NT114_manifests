@@ -31,26 +31,26 @@ spec:
               value: "http://lgbm-api:8003/predict/lgbm"
             - name: MLFLOW_TRACKING_URI
               value: {{ .Values.mlflow.trackingUri | quote }}
-            - name: MLFLOW_S3_ENDPOINT_URL
-              value: {{ .Values.mlflow.s3EndpointUrl | quote }}
+
             - name: REDIS_HOST
               value: {{ .Values.ensembleApi.redis.host | quote }}
             - name: REDIS_PORT
               value: {{ .Values.ensembleApi.redis.port | quote }}
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.minio.existingSecret }}
-                  key: {{ .Values.minio.accessKeyField }}
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.minio.existingSecret }}
-                  key: {{ .Values.minio.secretKeyField }}
+
           ports:
             - name: http
               containerPort: {{ .Values.ensembleApi.service.port }}
               protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
           resources:
             {{- toYaml .Values.ensembleApi.resources | nindent 12 }}
 ---

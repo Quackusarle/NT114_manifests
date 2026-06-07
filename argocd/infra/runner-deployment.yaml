@@ -11,6 +11,8 @@ spec:
         - self-hosted
         - k3s
         - mlops
+      image: summerwind/actions-runner:latest
+      imagePullPolicy: IfNotPresent
       dockerEnabled: false
       env:
         - name: PIP_CACHE_DIR

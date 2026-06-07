@@ -1,18 +1,10 @@
-aws:
-  serviceAccountRoleArn: "arn:aws:iam::111122223333:role/MLOps-Stock-S3-Access-Role"
-
 serviceAccount:
-  create: true
-  name: "mlops-stock-sa"
+  create: false
 
 mlflow:
-  trackingUri: "http://mlflow-local.mlops-infra.svc.cluster.local:5000"
-  s3EndpointUrl: ""
+  trackingUri: "http://mlflow-svc.mlops-infra.svc.cluster.local:5000"
 
-minio:
-  existingSecret: "minio-credentials"
-  accessKeyField: "rootUser"
-  secretKeyField: "rootPassword"
+
 
 redis:
   enabled: true
