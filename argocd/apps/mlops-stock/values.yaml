@@ -107,7 +107,7 @@ dashboardUi:
   image:
     repository: quackusarle/mlops-stock-dashboard
     pullPolicy: Always
-    tag: "sha-71063e4"
+    tag: "sha-7012f7f"
   service:
     type: ClusterIP
     port: 8081
