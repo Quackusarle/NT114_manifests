@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mlops-stock
+  name: mlops-stock-dev
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -11,9 +11,13 @@ spec:
     repoURL: https://github.com/Quackusarle/NT114_manifests.git
     targetRevision: HEAD
     path: argocd/apps/mlops-stock
+    helm:
+      releaseName: mlops-stock
+      valueFiles:
+        - values-dev.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: mlops-stock
+    namespace: mlops-stock-dev
   syncPolicy:
     automated:
       prune: true

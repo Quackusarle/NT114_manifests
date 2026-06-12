@@ -17,7 +17,8 @@ echo "3. Đang ra lệnh cho ArgoCD triển khai ứng dụng..."
 # Dùng namespace argocd để chứa các Application
 kubectl apply -n argocd -f ./argocd/infra/postgres.yaml
 kubectl apply -n argocd -f ./argocd/infra/mlflow.yaml
-kubectl apply -n argocd -f ./argocd/apps/mlops-stock-app.yaml
+kubectl apply -n argocd -f ./argocd/apps/mlops-stock-dev-app.yaml
+kubectl apply -n argocd -f ./argocd/apps/mlops-stock-prod-app.yaml
 
 echo "========================================="
 echo "Hoàn tất! Hệ thống đang được ArgoCD triển khai."
