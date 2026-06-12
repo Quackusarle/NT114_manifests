@@ -83,7 +83,7 @@ ensembleApi:
   image:
     repository: quackusarle/mlops-stock-ensemble-api
     pullPolicy: Always
-    tag: "sha-71063e4"
+    tag: "sha-dae8349"
   redis:
     host: "mlops-stock-redis-master"
     port: 6379
