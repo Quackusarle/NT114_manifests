@@ -107,7 +107,7 @@ dashboardUi:
   image:
     repository: quackusarle/mlops-stock-dashboard
     pullPolicy: Always
-    tag: "sha-7012f7f"
+    tag: "sha-a9722e8"
   service:
     type: ClusterIP
     port: 8081
@@ -144,4 +144,3 @@ ingress:
           backend:
             serviceName: ensemble-api
             servicePort: 8080
-
