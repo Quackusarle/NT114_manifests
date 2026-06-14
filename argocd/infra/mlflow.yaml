@@ -4,7 +4,7 @@ metadata:
   name: mlflow-svc
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+    - argocd.argoproj.io/finalizer
 spec:
   project: default
   source:
@@ -20,12 +20,11 @@ spec:
             port: 5432
             database: mlflow
             user: mlflow
-            passwordSecret: postgres-credentials
-            passwordSecretKey: postgres-password
+            password: "SuperSecretPassword123"
         artifactRoot:
+          defaultArtifactRoot: "s3://stock-models-dacn/mlflow-artifacts"
           s3:
             enabled: false
-        defaultArtifactRoot: "s3://stock-models-dacn/mlflow-artifacts"
         extraEnvVars:
           MLFLOW_S3_IGNORE_TLS: "true"
         service:

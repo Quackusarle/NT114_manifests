@@ -20,10 +20,10 @@ spec:
       resources:
         requests:
           cpu: "500m"
-          memory: "512Mi"
+          memory: "1Gi"
         limits:
           cpu: "2"
-          memory: "2Gi"
+          memory: "4Gi"
       volumes:
         - name: pip-cache
           hostPath:
@@ -33,9 +33,15 @@ spec:
           hostPath:
             path: /mnt/k3s-runner-cache/trivy
             type: DirectoryOrCreate
+        - name: sonar-cache
+          hostPath:
+            path: /mnt/k3s-runner-cache/sonar
+            type: DirectoryOrCreate
       volumeMounts:
         - name: pip-cache
           mountPath: /tmp/pip-cache
         - name: trivy-cache
           mountPath: /tmp/trivy-cache
+        - name: sonar-cache
+          mountPath: /tmp/sonar-cache
 

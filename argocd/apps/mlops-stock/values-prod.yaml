@@ -130,9 +130,9 @@ ingress:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-    alb.ingress.kubernetes.io/group.name: "mlops-group"
+    alb.ingress.kubernetes.io/group.name: "mlops-prod"
   hosts:
-    - host: "" # Empty host means catch-all
+    - host: ""
       paths:
         - path: /
           pathType: Prefix
@@ -144,3 +144,4 @@ ingress:
           backend:
             serviceName: ensemble-api
             servicePort: 8080
+

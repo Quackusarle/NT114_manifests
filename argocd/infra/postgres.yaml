@@ -4,13 +4,13 @@ metadata:
   name: postgres-local
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+    - argocd.argoproj.io/finalizer
 spec:
   project: default
   source:
-    repoURL: https://charts.bitnami.com/bitnami
+    repoURL: registry-1.docker.io/bitnamicharts
     chart: postgresql
-    targetRevision: "18.5.24"
+    targetRevision: "18.7.0"
     helm:
       valuesObject:
         fullnameOverride: postgres-svc
@@ -18,6 +18,8 @@ spec:
           username: mlflow
           existingSecret: postgres-credentials
           database: mlflow
+        networkPolicy:
+          enabled: false
         primary:
           persistence:
             storageClass: ebs-sc
