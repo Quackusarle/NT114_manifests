@@ -18,9 +18,9 @@ spec:
           username: mlflow
           existingSecret: postgres-credentials
           database: mlflow
-        networkPolicy:
-          enabled: false
         primary:
+          networkPolicy:
+            enabled: false
           persistence:
             storageClass: ebs-sc
             size: 5Gi
