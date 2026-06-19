@@ -20,7 +20,7 @@ dataApi:
   image:
     repository: quackusarle/mlops-stock-data-api
     pullPolicy: Always
-    tag: "sha-71063e4"
+    tag: "sha-b016be0"
   service:
     type: ClusterIP
     port: 8001
@@ -41,7 +41,7 @@ tftApi:
   image:
     repository: quackusarle/mlops-stock-tft-api
     pullPolicy: Always
-    tag: "sha-71063e4"
+    tag: "sha-b016be0"
   service:
     type: ClusterIP
     port: 8002
@@ -62,7 +62,7 @@ lgbmApi:
   image:
     repository: quackusarle/mlops-stock-lgbm-api
     pullPolicy: Always
-    tag: "sha-71063e4"
+    tag: "sha-b016be0"
   service:
     type: ClusterIP
     port: 8003
@@ -83,7 +83,7 @@ ensembleApi:
   image:
     repository: quackusarle/mlops-stock-ensemble-api
     pullPolicy: Always
-    tag: "sha-dae8349"
+    tag: "sha-b016be0"
   redis:
     host: "mlops-stock-redis-master"
     port: 6379
@@ -144,4 +144,3 @@ ingress:
           backend:
             serviceName: ensemble-api
             servicePort: 8080
-
