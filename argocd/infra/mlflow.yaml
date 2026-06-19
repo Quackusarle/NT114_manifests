@@ -25,11 +25,15 @@ spec:
           defaultArtifactRoot: "s3://stock-models-dacn/mlflow-artifacts"
           s3:
             enabled: false
+
         extraEnvVars:
           MLFLOW_S3_IGNORE_TLS: "true"
+          MLFLOW_REQUIRE_TRUSTED_HOSTS: "false"
         service:
           type: ClusterIP
           port: 5000
+          annotations:
+            tailscale.com/expose: "true"
         ingress:
           enabled: false
   destination:
